@@ -1,15 +1,22 @@
+extern crate hello;
+use hello::ThreadPool;
 use std::fs::File;
+use std::thread;
+use std::time::Duration;
 use std::{
     io::{Read, Write},
     net::{TcpListener, TcpStream},
 };
 
+
 fn main() {
     let listener = TcpListener::bind("127.0.0.1:8080").unwrap();
-
+    let pool = ThreadPool::new(4);
     for stream in listener.incoming() {
         let _stream = stream.unwrap();
-        handle_connection(_stream);
+        pool.execute(|| {
+            handle_connection(_stream);
+        });
     }
 }
 fn handle_connection(mut stream: TcpStream) {
@@ -18,7 +25,11 @@ fn handle_connection(mut stream: TcpStream) {
     println!("Requested {}", String::from_utf8_lossy(&buffer[..]));
 
     let get = b"GET / HTTP/1.1\r\n";
+    let sleep = b"GET /sleep HTTP/1.1\r\n";
     let (status_line, filename) = if buffer.starts_with(get) {
+        ("HTTP/1.1 200 OK\r\n\r\n{}", "home.html")
+    } else if buffer.starts_with(sleep) {
+        thread::sleep(Duration::from_secs(5));
         ("HTTP/1.1 200 OK\r\n\r\n{}", "home.html")
     } else {
         ("HTTP/1.1 404 NOT Found\r\n\r\n", "404.html")
