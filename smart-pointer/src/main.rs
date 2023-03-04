@@ -4,6 +4,12 @@ enum List {
     Cons(i32, Box<List>),
     Nil,
 }
+struct MyTest(i32, i32);
+impl MyTest {
+    fn print(&self) -> &i32 {
+        &self.1
+    } 
+}
 
 // define own smart pointer
 struct MyBox<T>(T);
@@ -17,6 +23,11 @@ impl<T> Deref for MyBox<T> {
     fn deref(&self) -> &T {
         &self.0
     }
+}
+
+// deref coersion
+fn hello(name: &str) {
+    println!("Hello, {}", name);
 }
 use List::{Cons, Nil};
 fn main() {
@@ -32,4 +43,9 @@ fn main() {
 
     let a = MyBox::new(x);
     assert_eq!(5, *a);
+    let b = MyTest(4, 5);
+    println!("{}", b.print());
+    // deref coersion
+    let m = MyBox::new(String::from("ben lim"));
+    hello(&m);
 }
