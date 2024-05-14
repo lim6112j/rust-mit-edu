@@ -31,10 +31,33 @@ impl Message {
 				println!("called Message::call method")
 		}
 }
+#[derive(Debug)]
+enum UsState {
+		Alabama,
+		NewYork,
+}
+enum Coin {
+		Penny,
+		Nickel,
+		Dime,
+		Quater(UsState),
+}
+fn value_in_cents(coin: Coin) -> u32 {
+		match coin {
+				Coin::Penny => 1,
+				Coin::Nickel => 5,
+				Coin::Dime => 10,
+				Coin::Quater(state) => {
+						println!("state is {:?}", state);
+						25
+				},
+		}
+}
 
 fn route(ip_type: IpAddrKind){
 		
 }
+
 fn main() {
 		let four = IpAddrKind::V4;
 		let six = IpAddrKind::V6;
@@ -44,5 +67,8 @@ fn main() {
 		let loopback2 = IpAddr2::V6(String::from("::1"));
 
 		let message = Message::Write(String::from("hello"));
-		message.call()
+		message.call();
+		let a_coin = Coin::Quater(UsState::Alabama);
+		let value = value_in_cents(a_coin);
+		println!("quater is {}", value);
 }
