@@ -1,3 +1,4 @@
+workspace = { members = ["vector_example"] }
 [package]
 name = "communicator"
 version = "0.1.0"
